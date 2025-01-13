@@ -8,31 +8,26 @@
   <meta property="og:image" content="bg.jpg" />
 
   <style type="text/css">
-    /* 
-       為了讓影片或背景圖能夠覆蓋整個畫面，常見做法是 
-       body, html 都設為 height: 100%; 並把 margin/padding 清為 0。
-       若你想讓內容在中間 30% 宽度，可酌情調整。
+    /*
+       為了讓影片或背景圖能夠覆蓋整個畫面，常見做法是
+       body, html 都設為 height: 100%; 並把 margin/padding 清為 0。
+       若你想讓內容在中間 30% 寬度，可酌情調整。
     */
     html,
     body {
       margin: 0;
       padding: 0;
-      /* 若想要影片完全鋪滿瀏覽器畫面，可以把這兩個都設成 100% */
       width: 100%;
       height: 100%;
       font-family: sans-serif;
-      /* 將所有文字顏色設為白色 */
       color: white;
     }
 
-    /* 若你想把主要內容限制在中間 30% 寬度，可另外再包一層 container。 */
     .container {
       width: 30%;
       margin: auto;
       position: relative;
-      /* 以便內容可正常在畫面中 */
       z-index: 2;
-      /* 要壓在影片之上 */
     }
 
     button {
@@ -42,37 +37,29 @@
     }
 
     .header {
-      /* 設定為 relative 方便疊加影片與內容 */
       position: relative;
-      /* 讓區塊至少有一個 100vh 的高度可看影片 */
       min-height: 100vh;
-      /* 後備背景圖：當影片載不出或沒自動播放時會顯示這張 */
       background: url("bg.jpg") center center / cover no-repeat;
       overflow: hidden;
     }
 
     .header video {
-      /* 讓影片佔滿整個父容器 (這裡是 .header) */
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      /* 影片等比例裁切，保持全畫面 */
       z-index: -1;
     }
 
     .header-content {
       position: relative;
       z-index: 1;
-      /* 確保內容在影片之上 */
       background-color: rgba(0, 0, 0, 0.5);
-      /* 半透明黑色背景，讓文字更清晰 */
       padding: 20px;
       border-radius: 5px;
       text-align: center;
-      /* 下面兩行可視需要做一點「置中」或往下留空等調整 */
       margin: 0 auto;
       margin-top: 50px;
       width: 100%;
@@ -113,7 +100,7 @@
     }
 
     #result li::before {
-      content: '🀄'
+      content: '🀄';
     }
 
     /* 音訊播放器樣式 */
@@ -122,12 +109,10 @@
       margin-top: 20px;
     }
 
-    /* 手機／平板等 RWD 可再視需求微調 */
     @media only screen and (max-device-width: 375px) {
       .container {
         width: 90%;
       }
-
       .header-content {
         width: 90%;
       }
@@ -137,7 +122,6 @@
       .container {
         width: 80%;
       }
-
       .header-content {
         width: 80%;
       }
@@ -149,7 +133,8 @@
   <div class="header">
     <video autoplay loop muted playsinline>
       <source src="BG.mp4" type="video/mp4">
-      </video>
+      您的瀏覽器不支持 video 標籤。
+    </video>
 
     <div class="container">
       <div class="header-content">
@@ -165,10 +150,11 @@
           <div id="result"></div>
           <div class="footer">
             <small>
-               
+              <!-- 版權或備註資訊 -->
             </small>
           </div>
-          <audio autoplay loop style="display:none;">
+          <!-- 修改這裡：移除 autoplay ，並新增 id 以方便後續控制 -->
+          <audio id="bgMusic" loop style="display:none;">
             <source src="bgmusic1.mp3" type="audio/mpeg">
             您的瀏覽器不支持 audio 標籤。
           </audio>
@@ -185,9 +171,7 @@
         const response = await fetch('lottery_auto_update.csv');
         const csvText = await response.text();
         coupons = parseCSV(csvText);
-
         console.log("解析後的 Coupons 數據:", coupons);
-
       } catch (error) {
         console.error("讀取或解析 CSV 時發生錯誤:", error);
       }
@@ -196,8 +180,6 @@
     function parseCSV(csvText) {
       const lines = csvText.split('\n');
       const parsedData = [];
-
-      // 沒有標題行，直接從第一行資料開始
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (line) {
@@ -220,7 +202,6 @@
       let _rs = names.map((name) => {
         let winning = [];
         coupons.forEach((coupon) => {
-          // 用 includes() 來判斷 coupon.name 是否包含輸入的 name
           if (coupon.name.includes(name)) {
             winning.push({ code: coupon.code, name: coupon.name });
           }
@@ -236,12 +217,10 @@
     function render(_rs) {
       let result = document.getElementById('result');
       result.innerHTML = '';
-
       _rs.forEach((r) => {
         let h3 = document.createElement('h3');
         h3.appendChild(document.createTextNode(r.id));
         result.appendChild(h3);
-
         let span = document.createElement('span');
         if (r.winning.length > 0) {
           r.winning.forEach((w) => {
@@ -257,22 +236,14 @@
     }
 
     function query() {
-      // 確認能拿到 uid TextArea
       let uid = document.getElementById('uid');
       console.log('uid element:', uid);
-
-      // 確保它不為 null (若是 null，則後續操作會報錯)
       if (!uid) {
         alert('找不到 id="uid" 的元素，請檢查 HTML 結構');
         return;
       }
-
-      // 設定一下顯示
       uid.style.display = 'block';
-
-      // 將使用者輸入的名字以逗號分隔，並去除前後空白
       let uids = uid.value.split(',').map((_uid) => _uid.trim());
-
       rs = search(uids, coupons);
       render(rs);
     }
@@ -286,6 +257,23 @@
       rs = [];
       render(rs);
     }
+
+    // 以下用來等待使用者第一次互動（點擊／觸碰頁面）後播放背景音樂
+    function initBgMusic() {
+      const bgMusic = document.getElementById('bgMusic');
+      if (bgMusic) {
+        bgMusic.play().then(() => {
+          console.log("背景音樂開始播放");
+        }).catch(err => {
+          console.error("背景音樂播放失敗:", err);
+        });
+      }
+      // 播放一次後移除監聽，避免重複觸發
+      document.removeEventListener('click', initBgMusic);
+    }
+
+    // 設定全域點擊事件，當使用者互動後觸發音樂播放
+    document.addEventListener('click', initBgMusic);
   </script>
 </body>
 
