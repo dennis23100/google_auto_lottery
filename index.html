@@ -38,10 +38,8 @@
 
     .header-content {
       position: relative;
-      z-index: 1;
-      /* 確保內容在影片之上 */
-      background-color: rgba(0, 0, 0, 0.5);
-      /* 半透明黑色背景，讓文字更清晰 */
+      z-index: 1; /* 確保內容在影片之上 */
+      background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景，讓文字更清晰 */
       padding: 20px;
       border-radius: 5px;
     }
@@ -111,6 +109,7 @@
   </style>
 </head>
 
+<!-- 保留 onload，讓網頁加載完成後就去 fetchData() -->
 <body onload="fetchData()">
   <div class="header">
     <video autoplay loop muted playsinline>
@@ -121,6 +120,7 @@
         <h1>虎彩繽紛童玩季 扭蛋線上兌獎</h1>
         <div>
           <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名，若有多位中獎者請用 , 分開多筆查詢"></textarea>
+          <!-- 按下查詢後觸發 query() -->
           <button onclick="query()">查詢</button>
         </div>
       </div>
@@ -140,6 +140,7 @@
     </div>
   </div>
 
+  <!-- 將所有 JS 程式碼放在 body 底部，確保抓得到 DOM 元素 -->
   <script>
     let coupons = [];
 
@@ -160,7 +161,7 @@
       const lines = csvText.split('\n');
       const parsedData = [];
 
-      // 因為沒有標題行，迴圈直接從第一行資料開始
+      // 沒有標題行，直接從第一行資料開始
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (line) {
@@ -183,6 +184,7 @@
       let _rs = names.map((name) => {
         let winning = [];
         coupons.forEach((coupon) => {
+          // 用 includes() 來判斷 coupon.name 是否包含輸入的 name
           if (coupon.name.includes(name)) {
             winning.push({ code: coupon.code, name: coupon.name });
           }
@@ -198,6 +200,7 @@
     function render(_rs) {
       let result = document.getElementById('result');
       result.innerHTML = '';
+
       _rs.forEach((r) => {
         let h3 = document.createElement('h3');
         h3.appendChild(document.createTextNode(r.id));
@@ -218,10 +221,20 @@
     }
 
     function query() {
-      // 移到函式內，確保每次都獲取正確的元素
+      // 確認能拿到 uid TextArea
       let uid = document.getElementById('uid');
+      console.log('uid element:', uid);
+
+      // 確保它不為 null (若是 null，則後續操作會報錯)
+      if (!uid) {
+        alert('找不到 id="uid" 的元素，請檢查 HTML 結構');
+        return;
+      }
+
+      // 設定一下顯示
       uid.style.display = 'block';
 
+      // 將使用者輸入的名字以逗號分隔，並去除前後空白
       let uids = uid.value.split(',').map((_uid) => _uid.trim());
 
       rs = search(uids, coupons);
@@ -229,10 +242,11 @@
     }
 
     function clean() {
-      // 移到函式內，確保每次都獲取正確的元素
       let uid = document.getElementById('uid');
-      uid.value = '';
-      uid.style.display = 'block';
+      if (uid) {
+        uid.value = '';
+        uid.style.display = 'block';
+      }
       rs = [];
       render(rs);
     }
