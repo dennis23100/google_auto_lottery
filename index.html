@@ -5,30 +5,34 @@
   <meta charset="utf-8">
   <title>龍年志工尾牙歲末年歡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <!-- 這裡如果有需要用到社群分享，可將 og:image 改成實際圖片路徑 -->
   <meta property="og:image" content="bg.jpg" />
 
   <style type="text/css">
-    /* 
-      為了讓影片或背景圖能夠覆蓋整個畫面，常見做法是 
-      body, html 都設為 height: 100%; 並把 margin/padding 清為 0。
-      若你想讓內容在中間 30% 宽度，可酌情調整。
+    /* 
+       為了讓影片或背景圖能夠覆蓋整個畫面，常見做法是 
+       body, html 都設為 height: 100%; 並把 margin/padding 清為 0。
+       若你想讓內容在中間 30% 宽度，可酌情調整。
     */
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       /* 若想要影片完全鋪滿瀏覽器畫面，可以把這兩個都設成 100% */
       width: 100%;
       height: 100%;
       font-family: sans-serif;
+      /* 將所有文字顏色設為白色 */
+      color: white;
     }
 
     /* 若你想把主要內容限制在中間 30% 寬度，可另外再包一層 container。 */
     .container {
       width: 30%;
       margin: auto;
-      position: relative; /* 以便內容可正常在畫面中 */
-      z-index: 2; /* 要壓在影片之上 */
+      position: relative;
+      /* 以便內容可正常在畫面中 */
+      z-index: 2;
+      /* 要壓在影片之上 */
     }
 
     button {
@@ -54,14 +58,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover; /* 影片等比例裁切，保持全畫面 */
+      object-fit: cover;
+      /* 影片等比例裁切，保持全畫面 */
       z-index: -1;
     }
 
     .header-content {
       position: relative;
-      z-index: 1; /* 確保內容在影片之上 */
-      background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景，讓文字更清晰 */
+      z-index: 1;
+      /* 確保內容在影片之上 */
+      background-color: rgba(0, 0, 0, 0.5);
+      /* 半透明黑色背景，讓文字更清晰 */
       padding: 20px;
       border-radius: 5px;
       text-align: center;
@@ -120,6 +127,7 @@
       .container {
         width: 90%;
       }
+
       .header-content {
         width: 90%;
       }
@@ -129,6 +137,7 @@
       .container {
         width: 80%;
       }
+
       .header-content {
         width: 80%;
       }
@@ -138,20 +147,16 @@
 
 <body onload="fetchData()">
   <div class="header">
-    <!-- 若你的影片檔名是 BG.mp4，就把檔案放在相同資料夾(或正確路徑) -->
     <video autoplay loop muted playsinline>
       <source src="BG.mp4" type="video/mp4">
-      <!-- 如果影片加載失敗，就會顯示上面設定的 .header background 圖 -->
-    </video>
+      </video>
 
-    <!-- 用一個 container 包住內文 -->
     <div class="container">
       <div class="header-content">
         <div class="main">
           <h1>龍年志工尾牙歲末年歡</h1>
           <div>
             <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名"></textarea>
-            <!-- 按下查詢後觸發 query() -->
             <button onclick="query()">查詢</button>
           </div>
         </div>
@@ -160,7 +165,7 @@
           <div id="result"></div>
           <div class="footer">
             <small>
-              感謝 dennis23100 提供設計與程式碼
+               
             </small>
           </div>
           <audio id="audio-player" controls>
@@ -172,7 +177,6 @@
     </div>
   </div>
 
-  <!-- 將所有 JS 程式碼放在 body 底部，確保抓得到 DOM 元素 -->
   <script>
     let coupons = [];
 
