@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <title>虎彩繽紛童玩季 扭蛋線上兌獎</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:image" content="bg.mp4" />
+  <meta property="og:image" content="BG.mp4" />
   <style type="text/css">
     body {
       width: 30%;
@@ -15,6 +15,7 @@
     button {
       width: 100%;
       height: 25pt;
+      margin-bottom: 30px;
     }
 
     .header {
@@ -55,11 +56,12 @@
 
     .main textarea {
       width: 95%;
-      font-size: 20pt;
+      font-size: 15pt;
     }
 
     .result-title {
       text-align: center;
+      margin-top: 30px;
     }
 
     .footer {
@@ -79,6 +81,12 @@
 
     #result li::before {
       content: '🀄'
+    }
+
+    /* 音訊播放器樣式 */
+    #audio-player {
+      width: 100%;
+      margin-top: 20px;
     }
 
     @media only screen and (max-device-width: 375px) {
@@ -125,6 +133,10 @@
           </small>
         </div>
       </div>
+      <audio id="audio-player" controls>
+        <source src="audio.mp3" type="audio/mpeg">
+        您的瀏覽器不支持 audio 標籤。
+      </audio>
     </div>
   </div>
 
@@ -148,7 +160,8 @@
       const lines = csvText.split('\n');
       const parsedData = [];
 
-      for (let i = 1; i < lines.length; i++) {
+      // 因為沒有標題行，迴圈直接從第一行資料開始
+      for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (line) {
           const cells = line.split(',');
