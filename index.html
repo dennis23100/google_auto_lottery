@@ -3,13 +3,9 @@
 
 <head>
   <meta charset="utf-8">
-  <div>
-    <img class="invert" src="LOGO.png" width="300"
-      style="display:block; margin:auto;">
-  </div>
   <title>虎彩繽紛童玩季 扭蛋線上兌獎</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:image" content="LOGO.png" />
+  <meta property="og:image" content="BG.mp4" />
   <style type="text/css">
     body {
       width: 30%;
@@ -22,10 +18,31 @@
     }
 
     .header {
+      position: relative;
       height: 100vh;
-      background-image: url(BG.png);
-      background-size: cover;
-      background-position: top;
+      overflow: hidden;
+    }
+
+    .header video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translateX(-50%) translateY(-50%);
+      z-index: -1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      /* 確保內容在影片之上 */
+      background-color: rgba(0, 0, 0, 0.5);
+      /* 半透明黑色背景，讓文字更清晰 */
+      padding: 20px;
+      border-radius: 5px;
     }
 
     .main {
@@ -68,34 +85,46 @@
       body {
         width: 95%;
       }
+
+      .header-content {
+        width: 95%;
+      }
     }
 
     @media only screen and (min-device-width: 375px) and (max-device-width: 667px) {
       body {
         width: 75%;
       }
+
+      .header-content {
+        width: 70%;
+      }
     }
   </style>
 </head>
 
 <body onload="fetchData()">
-  <div class="main">
-    <h1>虎彩繽紛童玩季 扭蛋線上兌獎</h1>
-    <p>
-      <small></small><br />
-      </p>
-    <div>
-      <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名，若有多位中獎者請用 , 分開多筆查詢"></textarea>
-      <button onclick="query()">查詢</button>
-    </div>
-  </div>
-  <div>
-    <h2 class="result-title">查詢結果</h2>
-    <div id="result"></div>
-    <div class="footer">
-      <small>
-        感謝 dennis23100 提供設計與程式碼
-      </small>
+  <div class="header">
+    <video autoplay loop muted playsinline>
+      <source src="BG.mp4" type="video/mp4">
+    </video>
+    <div class="header-content">
+      <div class="main">
+        <h1>虎彩繽紛童玩季 扭蛋線上兌獎</h1>
+        <div>
+          <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名，若有多位中獎者請用 , 分開多筆查詢"></textarea>
+          <button onclick="query()">查詢</button>
+        </div>
+      </div>
+      <div>
+        <h2 class="result-title">查詢結果</h2>
+        <div id="result"></div>
+        <div class="footer">
+          <small>
+            感謝 dennis23100 提供設計與程式碼
+          </small>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -104,8 +133,7 @@
 
     async function fetchData() {
       try {
-        // 使用 CSV 檔名，它應該與 HTML 文件在同一個目錄
-        const response = await fetch('lottery_auto_update.csv'); 
+        const response = await fetch('lottery_auto_update.csv');
         const csvText = await response.text();
         coupons = parseCSV(csvText);
 
