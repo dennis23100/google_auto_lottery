@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>龍年志工尾牙歲末年歡</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:image" content="bg.jpg" />
-
   <style type="text/css">
-    /*
-       為了讓影片或背景圖能夠覆蓋整個畫面，常見做法是
-       body, html 都設為 height: 100%; 並把 margin/padding 清為 0。
-       若你想讓內容在中間 30% 寬度，可酌情調整。
-    */
-    html,
-    body {
+    /* 基本設定 */
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -70,10 +63,6 @@
       text-align: center;
     }
 
-    .main .notice {
-      color: firebrick;
-    }
-
     .main textarea {
       width: 95%;
       font-size: 15pt;
@@ -98,7 +87,7 @@
     #result li {
       list-style: none;
     }
-
+    
     #result li::before {
       content: '🀄';
     }
@@ -109,6 +98,7 @@
       margin-top: 20px;
     }
 
+    /* 手機版自適應 */
     @media only screen and (max-device-width: 375px) {
       .container {
         width: 90%;
@@ -117,7 +107,6 @@
         width: 90%;
       }
     }
-
     @media only screen and (min-device-width: 375px) and (max-device-width: 667px) {
       .container {
         width: 80%;
@@ -128,20 +117,18 @@
     }
   </style>
 </head>
-
 <body onload="fetchData()">
   <div class="header">
     <video autoplay loop muted playsinline>
       <source src="BG.mp4" type="video/mp4">
       您的瀏覽器不支持 video 標籤。
     </video>
-
     <div class="container">
       <div class="header-content">
         <div class="main">
           <h1>龍年志工尾牙歲末年歡</h1>
           <div>
-            <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名"></textarea>
+            <textarea id="uid" rows="5" placeholder="請輸入中獎人完整姓名" style="display: block;"></textarea>
             <button onclick="query()">查詢</button>
           </div>
         </div>
@@ -149,11 +136,9 @@
           <h2 class="result-title">查詢結果</h2>
           <div id="result"></div>
           <div class="footer">
-            <small>
-              <!-- 版權或備註資訊 -->
-            </small>
+            <small>版權所有 © 2025</small>
           </div>
-          <!-- 修改這裡：移除 autoplay ，並新增 id 以方便後續控制 -->
+          <!-- 注意：移除原有 autoplay，新增 id -->
           <audio id="bgMusic" loop style="display:none;">
             <source src="bgmusic1.mp3" type="audio/mpeg">
             您的瀏覽器不支持 audio 標籤。
@@ -166,9 +151,11 @@
   <script>
     let coupons = [];
 
+    // 讀取 CSV 檔案並解析資料
     async function fetchData() {
       try {
-        const response = await fetch('lottery_auto_update.csv');
+        // 加入時間戳參數避免瀏覽器快取
+        const response = await fetch('lottery_auto_update.csv?t=' + new Date().getTime());
         const csvText = await response.text();
         coupons = parseCSV(csvText);
         console.log("解析後的 Coupons 數據:", coupons);
@@ -177,6 +164,7 @@
       }
     }
 
+    // 依據逗號分隔進行 CSV 解析
     function parseCSV(csvText) {
       const lines = csvText.split('\n');
       const parsedData = [];
@@ -198,11 +186,13 @@
 
     let rs = [];
 
+    // 搜尋輸入姓名與 CSV 資料比對
     let search = (names, coupons) => {
       let _rs = names.map((name) => {
         let winning = [];
         coupons.forEach((coupon) => {
-          if (coupon.name.includes(name)) {
+          // 使用 trim() 與 toLowerCase() 處理前後空白與大小寫差異
+          if (coupon.name.trim().toLowerCase().includes(name.trim().toLowerCase())) {
             winning.push({ code: coupon.code, name: coupon.name });
           }
         });
@@ -214,6 +204,7 @@
       return _rs;
     };
 
+    // 呈現查詢結果
     function render(_rs) {
       let result = document.getElementById('result');
       result.innerHTML = '';
@@ -221,7 +212,6 @@
         let h3 = document.createElement('h3');
         h3.appendChild(document.createTextNode(r.id));
         result.appendChild(h3);
-        let span = document.createElement('span');
         if (r.winning.length > 0) {
           r.winning.forEach((w) => {
             let p = document.createElement('p');
@@ -229,52 +219,46 @@
             result.appendChild(p);
           });
         } else {
+          let span = document.createElement('span');
           span.appendChild(document.createTextNode('查無此人中獎資訊'));
           result.appendChild(span);
         }
       });
     }
 
+    // 按下查詢按鈕時執行
     function query() {
       let uid = document.getElementById('uid');
-      console.log('uid element:', uid);
       if (!uid) {
-        alert('找不到 id="uid" 的元素，請檢查 HTML 結構');
+        alert('找不到 id="uid" 的元素');
         return;
       }
-      uid.style.display = 'block';
-      let uids = uid.value.split(',').map((_uid) => _uid.trim());
+      // 調試用：印出 textarea 輸入值
+      console.log("textarea 輸入值:", uid.value);
+      // 使用逗號分隔多個姓名，去除前後空白
+      let uids = uid.value.split(',').map(_uid => _uid.trim());
       rs = search(uids, coupons);
       render(rs);
     }
 
-    function clean() {
-      let uid = document.getElementById('uid');
-      if (uid) {
-        uid.value = '';
-        uid.style.display = 'block';
-      }
-      rs = [];
-      render(rs);
-    }
-
-    // 以下用來等待使用者第一次互動（點擊／觸碰頁面）後播放背景音樂
+    // 使用者第一次點擊或觸碰頁面時播放背景音樂
     function initBgMusic() {
       const bgMusic = document.getElementById('bgMusic');
       if (bgMusic) {
+        // 確保音量適當，若需要也可以設定 bgMusic.volume = 1.0;
         bgMusic.play().then(() => {
           console.log("背景音樂開始播放");
         }).catch(err => {
           console.error("背景音樂播放失敗:", err);
         });
       }
-      // 播放一次後移除監聽，避免重複觸發
+      // 移除事件，避免重複觸發
       document.removeEventListener('click', initBgMusic);
+      document.removeEventListener('touchstart', initBgMusic);
     }
-
-    // 設定全域點擊事件，當使用者互動後觸發音樂播放
+    // 加入點擊及觸碰事件來觸發背景音樂
     document.addEventListener('click', initBgMusic);
+    document.addEventListener('touchstart', initBgMusic);
   </script>
 </body>
-
 </html>
