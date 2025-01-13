@@ -195,12 +195,6 @@
       return _rs;
     };
 
-    let uid = null;
-
-    function loadUid() {
-      uid = document.getElementById('uid');
-    }
-
     function render(_rs) {
       let result = document.getElementById('result');
       result.innerHTML = '';
@@ -224,6 +218,8 @@
     }
 
     function query() {
+      // 移到函式內，確保每次都獲取正確的元素
+      let uid = document.getElementById('uid');
       uid.style.display = 'block';
 
       let uids = uid.value.split(',').map((_uid) => _uid.trim());
@@ -233,6 +229,8 @@
     }
 
     function clean() {
+      // 移到函式內，確保每次都獲取正確的元素
+      let uid = document.getElementById('uid');
       uid.value = '';
       uid.style.display = 'block';
       rs = [];
