@@ -88,6 +88,19 @@
       margin-top: 20px;
     }
 
+    /* 音樂控制按鈕樣式 */
+    #playPauseButton {
+      width: 50%; /* 按鈕寬度 */
+      height: 40px; /* 按鈕高度 */
+      margin: 10px auto; /* 上下間距 10px，左右自動置中 */
+      background-color: #4CAF50; /* 背景顏色 */
+      color: white; /* 文字顏色 */
+      border: none; /* 移除邊框 */
+      border-radius: 5px; /* 圓角 */
+      cursor: pointer; /* 滑鼠懸停時顯示指標 */
+      font-size: 16px; /* 字體大小 */
+    }
+    
     /* 手機版自適應 */
     @media only screen and (max-device-width: 375px) {
       .container {
@@ -128,6 +141,7 @@
             <source src="bgmusic1.mp3" type="audio/mpeg">
             您的瀏覽器不支持 audio 標籤。
           </audio>
+          <button id="playPauseButton" onclick="togglePlay()">播放音樂</button>
         </div>
       </div>
     </div>
@@ -135,6 +149,7 @@
 
   <script>
     let coupons = [];
+    let isPlaying = false; // 追蹤音樂播放狀態
 
     // 讀取 CSV 檔案並解析資料
     async function fetchData() {
@@ -231,10 +246,13 @@
     // 使用者第一次點擊或觸碰頁面時播放背景音樂
     function initBgMusic() {
       const bgMusic = document.getElementById('bgMusic');
-      if (bgMusic) {
-        // 確保音量適當，若需要也可以設定 bgMusic.volume = 1.0;
+      if (bgMusic && !isPlaying) {
+        bgMusic.volume = 0;
+        bgMusic.muted = true;
         bgMusic.play().then(() => {
-          console.log("背景音樂開始播放");
+          console.log("背景音樂開始播放 (靜音)");
+          isPlaying = true;
+          updateButtonText();
         }).catch(err => {
           console.error("背景音樂播放失敗:", err);
         });
@@ -246,6 +264,25 @@
     // 加入點擊及觸碰事件來觸發背景音樂
     document.addEventListener('click', initBgMusic);
     document.addEventListener('touchstart', initBgMusic);
+
+    // 控制音樂播放/暫停
+    function togglePlay() {
+      const bgMusic = document.getElementById('bgMusic');
+      if (isPlaying) {
+        bgMusic.pause();
+        isPlaying = false;
+      } else {
+        bgMusic.play();
+        isPlaying = true;
+      }
+      updateButtonText();
+    }
+
+    // 更新按鈕文字
+    function updateButtonText() {
+      const button = document.getElementById('playPauseButton');
+      button.textContent = isPlaying ? "暫停音樂" : "播放音樂";
+    }
   </script>
 </body>
 </html>
