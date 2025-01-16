@@ -246,21 +246,23 @@
     // 使用者第一次點擊或觸碰頁面時播放背景音樂
     function initBgMusic() {
       const bgMusic = document.getElementById('bgMusic');
-      if (bgMusic && !isPlaying) {
-        bgMusic.volume = 0;
-        bgMusic.muted = true;
-        bgMusic.play().then(() => {
-          console.log("背景音樂開始播放 (靜音)");
-          isPlaying = true;
-          updateButtonText();
-        }).catch(err => {
-          console.error("背景音樂播放失敗:", err);
-        });
-      }
-      // 移除事件，避免重複觸發
-      document.removeEventListener('click', initBgMusic);
-      document.removeEventListener('touchstart', initBgMusic);
+        if (bgMusic && !isPlaying) {
+            // 將音量先設定為 0, 並解除靜音設定.  讓使用者第一次點擊播放時可以觸發非靜音撥放
+            bgMusic.volume = 0;
+            bgMusic.muted = false; 
+            bgMusic.play().then(() => {
+                console.log("背景音樂嘗試播放");
+                isPlaying = true;
+                updateButtonText();
+            }).catch(err => {
+                console.error("背景音樂播放失敗:", err);
+            });
+        }
+        // 移除事件，避免重複觸發
+        document.removeEventListener('click', initBgMusic);
+        document.removeEventListener('touchstart', initBgMusic);
     }
+
     // 加入點擊及觸碰事件來觸發背景音樂
     document.addEventListener('click', initBgMusic);
     document.addEventListener('touchstart', initBgMusic);
@@ -272,6 +274,8 @@
         bgMusic.pause();
         isPlaying = false;
       } else {
+        bgMusic.muted = false; // 播放前解除靜音
+        bgMusic.volume = 1.0; // 設定音量為 1.0 (或其他你想要的值)
         bgMusic.play();
         isPlaying = true;
       }
