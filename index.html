@@ -138,7 +138,6 @@
           <div class="footer">
             <small>版權所有 ulin </small>
           </div>
-          <!-- 注意：移除原有 autoplay，新增 id -->
           <audio id="bgMusic" loop style="display:none;">
             <source src="bgmusic1.mp3" type="audio/mpeg">
             您的瀏覽器不支持 audio 標籤。
@@ -172,11 +171,12 @@
         const line = lines[i].trim();
         if (line) {
           const cells = line.split(',');
-          if (cells.length >= 3) {
+          if (cells.length >= 4) { // 現在有四個欄位了
             parsedData.push({
               time: cells[0].trim(),
               code: cells[1].trim(),
-              name: cells[2].trim()
+              name: cells[2].trim(),
+              prizeNumber: cells[3].trim() // 新增的獎號欄位
             });
           }
         }
@@ -193,7 +193,7 @@
         coupons.forEach((coupon) => {
           // 使用 trim() 與 toLowerCase() 處理前後空白與大小寫差異
           if (coupon.name.trim().toLowerCase().includes(name.trim().toLowerCase())) {
-            winning.push({ code: coupon.code, name: coupon.name });
+            winning.push({ code: coupon.code, name: coupon.name, prizeNumber: coupon.prizeNumber }); // 加入獎號資訊
           }
         });
         return {
@@ -215,7 +215,8 @@
         if (r.winning.length > 0) {
           r.winning.forEach((w) => {
             let p = document.createElement('p');
-            p.textContent = `恭喜 ${w.code} / ${w.name} 中獎`;
+            // 更新顯示的內容，加入獎號資訊
+            p.textContent = `${w.prizeNumber} 號獎 / 恭喜 ${w.code} - ${w.name} 中獎`;
             result.appendChild(p);
           });
         } else {
